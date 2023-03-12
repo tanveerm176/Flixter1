@@ -1,6 +1,7 @@
 package com.codepath.bestsellerlistapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,21 @@ import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.codepath.asynchttpclient.AsyncHttpClient
+import com.codepath.asynchttpclient.RequestParams
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.bestsellerlistapp.R
+import okhttp3.Headers
+
+//the fragment for our app, responsible for the networking
+//A Fragment represents a reusable portion of your app's UI.
+// A fragment defines and manages its own layout, has its own lifecycle,
+// and can handle its own input events.
+// Fragments cannot live on their own--
+// they must be hosted by an activity or another fragment.
 
 // --------------------------------//
+// TODO:
 // CHANGE THIS TO BE YOUR API KEY  //
 // --------------------------------//
 private const val API_KEY = "<YOUR-API-KEY-HERE>"
@@ -46,9 +59,31 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
         progressBar.show()
 
         // Create and set up an AsyncHTTPClient() here
-
+        val client = AsyncHttpClient()
+        val params = RequestParams()
+        params["api-key"] = API_KEY
         // Using the client, perform the HTTP request
+        client["https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json",
+                params,
+                object :
+                    JsonHttpResponseHandler() {
+                    override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
+                        // Access a JSON array response with `json.jsonArray`
+                        Log.d("DEBUG ARRAY", json.jsonArray.toString())
+                        // Access a JSON object response with `json.jsonObject`
+                        Log.d("DEBUG OBJECT", json.jsonObject.toString())
+                    }
+                    override fun onFailure(
+                        statusCode: Int,
+                        headers: Headers?,
+                        response: String,
+                        throwable: Throwable?
+                    ) {
+                    }
 
+
+
+        }]
         /* Uncomment me once you complete the above sections!
         {
             /*
