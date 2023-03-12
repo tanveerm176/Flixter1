@@ -14,20 +14,21 @@ import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.RequestParams
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.codepath.bestsellerlistapp.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Headers
+import org.json.JSONObject
 
-//the fragment for our app, responsible for the networking
-//A Fragment represents a reusable portion of your app's UI.
-// A fragment defines and manages its own layout, has its own lifecycle,
-// and can handle its own input events.
-// Fragments cannot live on their own--
-// they must be hosted by an activity or another fragment.
+/*
+the fragment for our app, responsible for the networking
+A Fragment represents a reusable portion of your app's UI.
+ A fragment defines and manages its own layout, has its own lifecycle,
+ and can handle its own input events.
+ Fragments cannot live on their own--
+ they must be hosted by an activity or another fragment.
+ */
 
-// --------------------------------//
-// TODO:
-// CHANGE THIS TO BE YOUR API KEY  //
-// --------------------------------//
-private const val API_KEY = "<YOUR-API-KEY-HERE>"
+private const val API_KEY = "9VNDnpde7NMyvxowA8FNHo1jfzBlqHNm"
 
 /*
  * The class for the only fragment in the app, which contains the progress bar,
@@ -67,66 +68,61 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
                 params,
                 object :
                     JsonHttpResponseHandler() {
-                    override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                        // Access a JSON array response with `json.jsonArray`
-                        Log.d("DEBUG ARRAY", json.jsonArray.toString())
-                        // Access a JSON object response with `json.jsonObject`
-                        Log.d("DEBUG OBJECT", json.jsonObject.toString())
+                    /*
+                     * The onSuccess function gets called when
+                     * HTTP response status is "200 OK"
+                     */
+                    override fun onSuccess(
+                        statusCode: Int,
+                        headers: Headers,
+                        json: JsonHttpResponseHandler.JSON
+                    ) {
+//                Get the "results" json out of the response, as another JSONObject
+                        val resultsJSON: JSONObject = json.jsonObject.get("results") as JSONObject
+
+//                Get the "books" from those results, as a String:
+                        val booksRawJSON: String = resultsJSON.get("books").toString()
+
+                        //Gson.fromJson() requires two things:
+                        // a raw JSON input, and the type it should convert to.
+                        // Since our "books" result is a list of books, we'll tell gson to treat it as
+                        // a List of BestSellerBook objects:
+
+//                         The wait for a response is over
+                         progressBar.hide()
+//
+//                //TODO - Parse JSON into Models
+                        val gson = Gson()
+                        val arrayBookType = object : TypeToken<List<BestSellerBook>>() {}.type
+                        val models: List<BestSellerBook> = gson.fromJson(booksRawJSON, arrayBookType)
+
+                        recyclerView.adapter =
+                            BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
+//
+//                // Look for this in Logcat:
+                        Log.d("BestSellerBooksFragment", "response successful")
                     }
+
+                    /*
+                     * The onFailure function gets called when
+                     * HTTP response status is "4XX" (eg. 401, 403, 404)
+                     */
                     override fun onFailure(
                         statusCode: Int,
                         headers: Headers?,
-                        response: String,
-                        throwable: Throwable?
+                        errorResponse: String,
+                        t: Throwable?
                     ) {
+                        // The wait for a response is over
+                        progressBar.hide()
+
+                        // If the error is not null, log it!
+                        t?.message?.let {
+                            Log.e("BestSellerBooksFragment", errorResponse)
+                        }
                     }
+                }]
 
-
-
-        }]
-        /* Uncomment me once you complete the above sections!
-        {
-            /*
-             * The onSuccess function gets called when
-             * HTTP response status is "200 OK"
-             */
-            override fun onSuccess(
-                statusCode: Int,
-                headers: Headers,
-                json: JsonHttpResponseHandler.JSON
-            ) {
-                // The wait for a response is over
-                progressBar.hide()
-
-                //TODO - Parse JSON into Models
-
-                val models : List<BestSellerBook> = null // Fix me!
-                recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
-
-                // Look for this in Logcat:
-                Log.d("BestSellerBooksFragment", "response successful")
-            }
-
-            /*
-             * The onFailure function gets called when
-             * HTTP response status is "4XX" (eg. 401, 403, 404)
-             */
-            override fun onFailure(
-                statusCode: Int,
-                headers: Headers?,
-                errorResponse: String,
-                t: Throwable?
-            ) {
-                // The wait for a response is over
-                progressBar.hide()
-
-                // If the error is not null, log it!
-                t?.message?.let {
-                    Log.e("BestSellerBooksFragment", errorResponse)
-                }
-            }
-        }]
-        */
 
     }
 
