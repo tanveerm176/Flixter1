@@ -33,7 +33,7 @@ Here's a walkthrough of implemented user stories:
 <img src='https://github.com/tanveerm176/and102-lab3-starter/blob/project3/FlixterAppWalkthrough_AdobeExpress.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 <!-- Replace this with whatever GIF tool you used! -->
-GIF created with Android Screen Recorder  
+GIF created with Android Screen Recorder (I had to use a 3rd party gif converter because I was using my phone instead of the emulator)
 <!-- Recommended tools:
 [Kap](https://getkap.co/) for macOS
 [ScreenToGif](https://www.screentogif.com/) for Windows
