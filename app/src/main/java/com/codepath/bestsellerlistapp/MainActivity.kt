@@ -6,7 +6,7 @@ import com.codepath.bestsellerlistapp.R.id
 
 /**
  * The MainActivity for the BestSellerList app.
- * Launches a [BestSellerBooksFragment].
+ * Launches a [NowPlayingMoviesFragment].
  */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +16,6 @@ class MainActivity : AppCompatActivity() {
 
         val supportFragmentManager = supportFragmentManager
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(id.content, BestSellerBooksFragment(), null).commit()
+        fragmentTransaction.replace(id.content, NowPlayingMoviesFragment(), null).commit()
     }
 }
